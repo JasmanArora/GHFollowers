@@ -13,6 +13,8 @@ class SearchVC: UIViewController {
     let usernameTextField = GFTextField()
     let callToActionButton = GFButton(backgroundColor: .systemGreen, title: "Get Followers")
     
+    var isUsernameEntered: Bool { return !usernameTextField.text!.isEmpty }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -32,6 +34,21 @@ class SearchVC: UIViewController {
         
         let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
         view.addGestureRecognizer(tap)
+    }
+    
+    @objc func pushFollowerListVC() {
+        
+        guard isUsernameEntered else {
+            print("No Username")
+            presentGFAlertOnMainThread(title: "Empty Username", message: "Please enter a username. We need to know who to look for.", buttonTitle: "OK")
+            return
+            
+        }
+        
+        let followerListVC = FollowerListVC()
+        followerListVC.username = usernameTextField.text
+        followerListVC.title = usernameTextField.text
+        navigationController?.pushViewController(followerListVC, animated: true)
     }
     
     
@@ -69,6 +86,7 @@ class SearchVC: UIViewController {
     func configureCallToActionButton() {
         
         view.addSubview(callToActionButton)
+        callToActionButton.addTarget(self, action: #selector(pushFollowerListVC), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
         
@@ -88,7 +106,8 @@ class SearchVC: UIViewController {
 
 extension SearchVC: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print("Did Tap Return")
+        //print("Did Tap Return")
+        pushFollowerListVC()
         return true
     }
     
